@@ -1,145 +1,219 @@
+<div align="center">
+
 # Web File Launcher
 
-Tự mở file, chương trình hoặc thư mục trên máy khi bạn truy cập một website đã chọn.
+**Connect the websites you visit to the files you use.**
 
-Ví dụ: mở **coding.uet.edu.vn** → tự chạy **python_server.exe** của bạn. Mọi thao tác quản lý nằm trong popup nhỏ khi bấm biểu tượng tiện ích.
+Open a local application, document, or folder automatically when you visit a configured website.
 
-**Tác giả:** qu4nh · **Phiên bản:** 2.1.0 · **Trình duyệt:** Chrome, Microsoft Edge · **Hệ điều hành:** Windows 10/11
+![Windows](https://img.shields.io/badge/platform-Windows-0078D4)
+![Chrome](https://img.shields.io/badge/browser-Chrome-4285F4)
+![Edge](https://img.shields.io/badge/browser-Edge-0078D7)
+![Version](https://img.shields.io/badge/extension-v2.1.0-16694F)
 
-> **Trước khi cài:** nhấp đúp **`install.cmd` một lần** để kết nối tiện ích với Windows. File này gọi `install.ps1` và giữ cửa sổ mở để bạn đọc kết quả. File `WebFileLauncher.Host.exe` chưa có chức năng tự cài khi nhấp đúp và chưa có chữ ký số tin cậy. Nếu Smart App Control chặn cầu nối, tiện ích chưa thể mở file trên máy đó. Xem phần xử lý lỗi bên dưới.
+[Getting started](#getting-started) · [Usage](#usage) · [Troubleshooting](#troubleshooting) · [Report an issue](https://github.com/Qu4nh/File-Launcher/issues)
 
-## 1. Tải và giải nén
+Created by [qu4nh](https://github.com/Qu4nh).
 
-1. Trên trang GitHub này, bấm **Code → Download ZIP**.
-2. Giải nén toàn bộ ZIP vào nơi bạn muốn giữ lâu dài.
-3. Mở thư mục chứa `README.md`, `extension` và `native-host`.
+</div>
 
-Không chạy trực tiếp trong ZIP. Giữ nguyên vị trí thư mục sau khi cài; không cần di chuyển hay chép file mục tiêu vào thư mục tiện ích.
+## Overview
 
-## 2. Kết nối với Windows — chỉ làm một lần
+Web File Launcher pairs a website with something on your Windows PC. For example, opening a project dashboard can launch your desktop tool, a reference document, or the project's local folder.
 
-Tiện ích cần một chương trình nhỏ gọi là **cầu nối** để mở file trên máy. Bước này đăng ký cầu nối cho **cả Chrome và Edge**, không cần quyền quản trị.
+Manage everything from a compact toolbar popup. There is no separate settings tab and no cloud service to configure.
 
-1. Trong File Explorer, mở thư mục chứa `README.md`.
-2. Nhấp đúp **`install.cmd`**. Cửa sổ cài đặt sẽ giữ nguyên sau khi chạy.
-3. Khi thấy **Registered for Chrome and Edge** và **Installation completed**, chuyển sang bước 3 bên dưới.
-4. Nếu thấy lỗi, giữ cửa sổ đó để chụp hoặc chép nguyên thông báo. Nhật ký nằm ở `%TEMP%\WebFileLauncher-install.log`. Nhấn phím bất kỳ khi muốn đóng.
+The project consists of a browser extension and a Windows **native host**. The native host is required because browser extensions cannot directly launch arbitrary local programs.
 
-Nếu `install.cmd` cũng bị Windows chặn, mở PowerShell từ thư mục này bằng cách gõ `powershell` vào thanh địa chỉ File Explorer, rồi chạy:
+> **Distribution status:** this package includes an unsigned native host. Windows Smart App Control or organizational policies may prevent it from running. The installer does not disable these protections. This is not a signed, store-distributed release.
 
-```powershell
-.\native-host\install.ps1
+## Features
+
+- Map websites to local applications, documents, or folders.
+- Add, enable, disable, remove, and test rules in a **400 × 560 px popup**.
+- Select targets using the Windows file or folder picker.
+- Use the current website without typing its address.
+- Optionally avoid launching an executable that is already running from the same path.
+- Apply a **15-second cooldown** per rule to reduce repeated launches.
+- Review the latest **30 automatic launch events**, stored locally.
+- Register the native host for **Chrome and Edge** with one setup step.
+
+## Requirements
+
+| Component | Requirement |
+| --- | --- |
+| Operating system | Windows 10 or 11 |
+| Browser | Google Chrome or Microsoft Edge, with unpacked extensions allowed |
+| Runtime | .NET Framework 4.6 or later |
+| Local target | An existing file, application, or folder accessible to your Windows account |
+
+Documents require an associated application. Executables may have their own dependencies. The native host currently supports Windows only. The popup interface is currently in Vietnamese; label translations are included below.
+
+## Getting started
+
+### 1. Download
+
+[Download the latest source-tree ZIP](https://github.com/Qu4nh/File-Launcher/archive/refs/heads/main.zip), then extract the entire archive to a permanent location.
+
+The extracted directory should contain:
+
+```text
+File-Launcher/
+├── extension/                     Browser extension
+├── native-host/
+│   ├── WebFileLauncher.Host.exe    Windows native host
+│   └── install.ps1                Native host registration
+├── install.cmd                    Setup launcher with error logging
+└── README.md
 ```
 
-Cửa sổ PowerShell mở sẵn sẽ không tự đóng khi script lỗi. Đây vẫn là cùng script cài đặt, tuân theo chính sách Windows hiện tại.
+Do not run setup inside the ZIP or move this directory after installation.
 
-Sau bước này, bạn không cần mở PowerShell mỗi lần sử dụng. Script tạo file cấu hình `native-host/host.json` theo đường dẫn trên máy bạn; không gửi file đó cho người khác.
+### 2. Register the native host
 
-Nếu Windows báo chặn script hoặc chương trình, xem **Khi gặp lỗi**. Đăng ký thành công chưa bảo đảm Windows cho phép cầu nối chạy.
+Double-click **`install.cmd`** in the extracted directory. This invokes the registration script for your current Windows account; administrator privileges are not normally required.
 
-## 3. Thêm tiện ích vào trình duyệt
+Wait for both messages:
 
-| Bạn dùng | Nhập vào thanh địa chỉ |
+```text
+Registered for Chrome and Edge (current Windows user).
+Installation completed.
+```
+
+The window stays open so you can read any errors. Setup writes a diagnostic log to:
+
+```text
+%TEMP%\WebFileLauncher-install.log
+```
+
+Registration creates `native-host/host.json` using your installation path. Do not share that generated file with other users; each person should run setup on their own PC.
+
+If setup is blocked, see [Troubleshooting](#troubleshooting). Successful registration alone does not mean Windows will allow the host to execute.
+
+### 3. Load the extension
+
+1. Open `chrome://extensions` in Chrome or `edge://extensions` in Edge.
+2. Enable **Developer mode**.
+3. Click **Load unpacked** and select the extracted **`extension`** directory.
+4. Pin **Web File Launcher** to your toolbar if desired.
+5. Click its icon to open the popup.
+
+Repeat this step for each browser profile you want to use. You only need to register the Windows host once per installation location and Windows account.
+
+### 4. Create your first rule
+
+1. Open the popup and check for **Đã kết nối** (Connected). Click **↻** to refresh if needed.
+2. Select **＋ Thêm mới** (Add new).
+3. Enter a name such as **Project workspace**.
+4. Enter a website, for example `https://example.com/`, or click **Trang này** (Current site).
+5. Choose **File / chương trình** (File / application) or **Thư mục** (Folder).
+6. Click **Chọn file và lưu** (Choose target and save), then select your target in the Windows dialog.
+7. Visit or reload the website to trigger the rule. Use **Mở thử** (Test launch) to test it manually.
+
+The popup may close when the Windows picker receives focus. Selection continues in the background; reopen the popup after finishing to see the saved result. Complete or cancel the existing picker before opening another one.
+
+## Usage
+
+| Popup control | Action |
 | --- | --- |
-| Google Chrome | `chrome://extensions` |
-| Microsoft Edge | `edge://extensions` |
+| **Quy tắc** | View rules, toggle them, or launch a target manually. |
+| **＋ Thêm mới** | Create a website-to-target rule. |
+| **Chọn lại** | Select a different target for an existing rule. |
+| **Xóa** → **Xác nhận xóa** | Remove a rule; the target file is kept. |
+| **Hoạt động** | View or clear recent automatic launch events. |
+| **↻** | Reconnect and refresh saved rules. |
 
-1. Mở trang quản lý tiện ích tương ứng trong bảng trên.
-2. Bật **Developer mode / Chế độ nhà phát triển**.
-3. Bấm **Load unpacked / Tải tiện ích đã giải nén**.
-4. Chọn thư mục **extension** trong gói vừa giải nén.
-5. Bấm biểu tượng mảnh ghép trên thanh công cụ, tìm **Web File Launcher** rồi ghim/hiển thị tiện ích nếu muốn.
+### Website matching
 
-Dùng cả hai trình duyệt hoặc nhiều hồ sơ? Lặp lại bước 3 trong từng trình duyệt/hồ sơ muốn dùng. Tiện ích không tự mở tab cấu hình riêng.
+Rules match a website's **origin**: its protocol, hostname, and port. Paths, queries, and URL fragments are not part of the rule.
 
-## 4. Chọn website và file cần mở
+For a rule configured with `https://example.com`:
 
-1. Bấm biểu tượng **Web File Launcher** để mở popup.
-2. Kiểm tra dòng **Đã kết nối**. Có thể bấm nút **↻** để kiểm tra lại.
-3. Chọn **＋ Thêm mới**.
-4. Nhập tên dễ nhớ, ví dụ **Python Server cho UET**.
-5. Nhập website, ví dụ `https://coding.uet.edu.vn/`. Nút **Trang này** lấy địa chỉ website đang mở.
-6. Chọn **File / chương trình** hoặc **Thư mục**, rồi bấm **Chọn file và lưu**.
-7. Chọn file hoặc thư mục thật trên máy trong hộp thoại Windows.
-8. Mở hoặc tải lại website để thử. Bạn cũng có thể bấm **Mở thử** trong mục **Quy tắc**.
-
-**Popup có thể đóng khi bạn chuyển sang hộp chọn Windows.** Chọn xong rồi bấm lại biểu tượng tiện ích; kết quả vẫn được lưu bởi phần chạy nền.
-
-## Sử dụng hằng ngày
-
-Chỉ cần mở website đã cấu hình. Các mục trong popup:
-
-| Mục | Bạn có thể làm gì? |
+| Visited address | Matches? |
 | --- | --- |
-| **Quy tắc** | Bật/tắt, mở thử, chọn lại file hoặc xóa một quy tắc. |
-| **＋ Thêm mới** | Kết nối một website với file/thư mục khác. |
-| **Hoạt động** | Xem 30 hoạt động tự mở gần nhất và xóa nhật ký. |
+| `https://example.com` | Yes |
+| `https://example.com/projects/42` | Yes |
+| `http://example.com` | No — different protocol |
+| `https://app.example.com` | No — different hostname |
+| `https://example.com:8443` | No — different port |
 
-- Một quy tắc áp dụng cho website đó và mọi trang con. Ví dụ, nhập `https://coding.uet.edu.vn/problem/1` vẫn áp dụng cho toàn bộ `https://coding.uet.edu.vn`.
-- HTTP, HTTPS, tên miền phụ và cổng khác nhau được coi là các website khác nhau.
-- Có thời gian chờ **15 giây** giữa các lần mở cùng quy tắc. Tùy chọn tránh mở trùng áp dụng cho chương trình `.exe` đang chạy từ cùng đường dẫn; tài liệu/thư mục chỉ áp dụng thời gian chờ.
-- Nếu bạn đóng chương trình trong lúc vẫn ở website, hãy tải lại trang hoặc bấm **Mở thử** để mở lại.
-- Đóng website không tự đóng chương trình đã mở. File tài liệu dùng ứng dụng mặc định của Windows; không hỗ trợ đối số dòng lệnh.
-- Các hồ sơ trình duyệt dùng chung quy tắc của cầu nối Windows. Mở lại popup để đồng bộ sau khi thay đổi ở hồ sơ khác.
+Entering a full page URL when creating a rule stores its origin. Opening a matching website can trigger every enabled rule assigned to that origin.
 
-## Khi gặp lỗi
+### Launch behavior
 
-### Popup báo chưa kết nối
+- Executables run directly, without additional command-line arguments.
+- Documents and folders open through Windows using their default handlers.
+- Duplicate detection applies to `.exe` processes at the same path. Elevated processes may restrict path inspection; document and folder duplication cannot be reliably detected.
+- If you close a target while staying on a website, reload the page or launch it manually to open it again.
+- Closing the website or browser does not automatically close launched applications.
+- Normal navigation and History API URL changes can trigger rules; iframe navigation and fragment-only changes do not. Back/Forward behavior depends on browser navigation events.
+- Private browsing is not enabled by default.
 
-Kiểm tra đã giải nén toàn bộ gói, chạy thành công bước 2 và giữ nguyên vị trí thư mục. Sau đó bấm **↻** trong popup. Nếu đã di chuyển thư mục, chạy lại `install.ps1` từ vị trí mới và nạp lại thư mục `extension` trong trình duyệt.
+## Troubleshooting
 
-### Báo “install.ps1 is not digitally signed”
+### “install.ps1 is not digitally signed”
 
-File tải từ GitHub có thể mang dấu “từ Internet”. Với chính sách `RemoteSigned`, PowerShell yêu cầu chữ ký cho script đó, trừ khi bạn đã kiểm tra và chủ động cho phép riêng file này.
-
-Mở PowerShell tại thư mục chứa `README.md`, kiểm tra:
+Downloaded files may carry an Internet-zone marker. Open PowerShell in the extracted directory and check your policy:
 
 ```powershell
 Get-ExecutionPolicy
 ```
 
-Nếu kết quả là **RemoteSigned**, sau khi xem nội dung `native-host/install.ps1` và xác nhận đây là bản bạn tin cậy, chạy:
+If it is **RemoteSigned**, inspect `native-host/install.ps1` first. If you trust that specific file, remove its download marker and run it:
 
 ```powershell
 Unblock-File -LiteralPath .\native-host\install.ps1
 .\native-host\install.ps1
 ```
 
-`Unblock-File` chỉ bỏ dấu tải xuống của file đã chọn, không đổi Execution Policy hoặc Smart App Control. Không áp dụng cho mọi file tải về hoặc chương trình không rõ nguồn gốc.
+This does not change the execution policy or Smart App Control. Do not apply it indiscriminately to downloaded files. If your policy is **AllSigned**, **Restricted**, or managed by your organization, use an appropriately signed or approved installation instead.
 
-Nếu chính sách là **AllSigned**, **Restricted**, hoặc máy do tổ chức quản lý vẫn chặn, cách trên không thay thế yêu cầu ký/phê duyệt. Cần bản được ký phù hợp hoặc hỗ trợ từ quản trị viên; không dùng lệnh bypass để vượt chính sách.
+See Microsoft's [execution policy documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1#manage-signed-and-unsigned-scripts).
 
-Xem [hướng dẫn RemoteSigned và script tải từ Internet của Microsoft](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1#manage-signed-and-unsigned-scripts).
+### Smart App Control or Application Control blocks the host
 
-### Smart App Control / Application Control chặn
+The bundled host is unsigned. Re-registering it or unblocking the registration script does not make the executable trusted. You need a host build accepted by Windows and any applicable organizational policy. Do not disable these protections to install this package. Target applications are checked independently.
 
-Cầu nối đi kèm **chưa được ký số tin cậy** nên có thể bị Windows chặn. Đổi sang extension hoặc đăng ký lại không tự giải quyết việc này. Cần bản cầu nối được ký phù hợp và được Windows cho phép; máy do tổ chức quản lý cần làm theo chính sách của quản trị viên.
+### The popup cannot connect
 
-Không tắt Smart App Control để chạy gói này. Chương trình/file bạn muốn mở cũng được Windows kiểm tra độc lập.
+Confirm that setup completed, all files were extracted, and the installation directory has not moved. Click **↻** in the popup. If the directory moved, register the host again and reload the extension from its new location.
 
-### Có kết nối nhưng file không mở
+### A target does not open
 
-- Bấm **Mở thử** để đọc thông báo cụ thể.
-- Kiểm tra file còn ở vị trí cũ; dùng **Chọn lại** nếu file đã đổi chỗ.
-- Thử mở trực tiếp file đó trong Windows để kiểm tra ứng dụng/phụ thuộc cần thiết.
-- Nếu vừa mở gần đây, chờ đủ 15 giây rồi thử lại.
-- Windows cần **.NET Framework 4.6 trở lên** để chạy cầu nối.
+Use **Mở thử** to read the error, verify the target still exists, and try opening it directly in Windows. Wait for the 15-second cooldown if it was just launched. Use **Chọn lại** if its location changed.
 
-## Cập nhật và gỡ bỏ
+If setup fails, inspect `%TEMP%\WebFileLauncher-install.log`. Share the relevant error when [opening an issue](https://github.com/Qu4nh/File-Launcher/issues), removing personal paths or other private details first.
 
-**Cập nhật:** đóng hộp chọn file đang mở, giải nén bản mới vào vị trí cố định, chạy lại bước 2 nếu đường dẫn cầu nối thay đổi, rồi bấm **Reload / Tải lại** của tiện ích ở `chrome://extensions` hoặc `edge://extensions`.
+## Privacy and permissions
 
-**Dừng sử dụng:** xóa **Web File Launcher** ở trang quản lý tiện ích của từng trình duyệt. Đăng ký cầu nối còn lại không tự chạy chương trình; file/chương trình mục tiêu được giữ nguyên.
+Rules are stored in `%LOCALAPPDATA%\WebFileLauncher\rules.json`. Each browser profile stores its own local cache, form draft, selection result, and activity log. Profiles on the same Windows account share host rules; reopen the popup to refresh a profile's cache.
 
-Nếu muốn dọn sạch, có thể xóa thư mục đã giải nén và dữ liệu quy tắc ở `%LOCALAPPDATA%\WebFileLauncher`. Người có kinh nghiệm hoặc quản trị viên có thể xóa riêng khóa `io.github.web_file_launcher` do gói này tạo tại hai vị trí sau, không xóa các khóa của tiện ích khác:
+The extension has no cloud backend, analytics, or remote scripts. It does not inject content scripts or read page contents. A page cannot supply a launch path: the native host resolves the target from the locally saved rule and validates the rule's enabled state and website origin.
+
+| Permission | Purpose |
+| --- | --- |
+| `webNavigation` | Detect website navigation and match configured origins. |
+| `nativeMessaging` | Communicate with the registered Windows host. |
+| `storage` | Store settings and activity locally. |
+| `activeTab` | Identify the current website when the popup is opened. |
+
+Applications launched by a rule have their own behavior and privacy policies.
+
+## Updating and removal
+
+**Update:** close any open target picker, replace the package in its permanent location, and click **Reload** on the browser's extensions page. Run setup again if the host path changes.
+
+**Remove:** remove **Web File Launcher** from each browser profile. Remaining host registration does not automatically launch anything, and your target files remain intact. You can then delete the installation directory and `%LOCALAPPDATA%\WebFileLauncher` if you no longer need the saved rules.
+
+For complete registry cleanup, experienced users or administrators can remove only the `io.github.web_file_launcher` key created by this package beneath:
 
 ```text
 HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts
 HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts
 ```
 
-## Dữ liệu và trạng thái bản phát hành
+## Project status and feedback
 
-Quy tắc lưu tại `%LOCALAPPDATA%\WebFileLauncher\rules.json`. Cache, bản nháp và nhật ký lưu trong hồ sơ trình duyệt; tiện ích không gửi chúng tới máy chủ trung gian. Mỗi người tự chọn file và đăng ký cầu nối trên máy mình.
+The popup and JavaScript logic have been tested with simulated browser/native APIs. Native host registration and a read-only messaging request have also been verified on the development machine. End-to-end target selection and launch through an installed extension have not yet been fully verified; compatibility with every Windows security configuration is not established.
 
-UI và logic JavaScript đã qua kiểm thử bằng API giả lập. **Chưa xác nhận toàn bộ luồng chọn/mở file với cầu nối thật** do Application Control trên máy đóng gói. Đây chưa phải bản phát hành đã ký số và kiểm thử đầy đủ trên mọi máy.
+This repository distributes the runnable package rather than a complete native-host development environment. Bug reports, documentation improvements, and feature requests are welcome through [GitHub Issues](https://github.com/Qu4nh/File-Launcher/issues).
