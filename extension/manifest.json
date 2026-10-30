@@ -1,0 +1,25 @@
+{
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Web File Launcher"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxuf9+gsvLt2rdWn+iw6Jt4EARrYrot4yU69xz5Ao+zOD9Ir0tdKYwDxaTF8gT6UVQOvAiCDkFf+scGk2zeBWTBNFOmxL3KfQqtykopm0ysl01RQHgZitCoAA3lXNvvmDuUtbBRM7SnWQKVnslmKwSlSoFC8GVjRken2Kr8gVO7ZGfzKNrrToqWwVixl/7OoXtbiRiKUWE6n3Ug2Iu42AqhLdM7WERuBC0zEMyEOb9YYfqAkXOJAO4lxLOhf/MkxrQYgPM+Qf5VfgF2UahDtln5Ci/yp3NEJHSdpu1Y5/NpdFfcO2VGQcpOqV92CJT9D4O5MAnN6xUG9IG3Ik/KCEoQIDAQAB",
+  "version": "2.1.0",
+  "name": "Web File Launcher",
+  "permissions": [
+    "storage",
+    "nativeMessaging",
+    "webNavigation",
+    "activeTab"
+  ],
+  "background": {
+    "type": "module",
+    "service_worker": "background.js"
+  },
+  "description": "Open a locally configured file or folder when you visit a website. Windows native host required.",
+  "manifest_version": 3,
+  "author": "qu4nh"
+}
