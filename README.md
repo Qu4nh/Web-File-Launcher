@@ -6,7 +6,7 @@ Ví dụ: mở **coding.uet.edu.vn** → tự chạy **python_server.exe** của
 
 **Tác giả:** qu4nh · **Phiên bản:** 2.1.0 · **Trình duyệt:** Chrome, Microsoft Edge · **Hệ điều hành:** Windows 10/11
 
-> **Trước khi cài:** bản hiện tại cần chạy `install.ps1` **một lần** để kết nối tiện ích với Windows. File `WebFileLauncher.Host.exe` chưa có chức năng tự cài khi nhấp đúp và chưa có chữ ký số tin cậy. Nếu Smart App Control chặn cầu nối, tiện ích chưa thể mở file trên máy đó. Xem phần xử lý lỗi bên dưới.
+> **Trước khi cài:** nhấp đúp **`install.cmd` một lần** để kết nối tiện ích với Windows. File này gọi `install.ps1` và giữ cửa sổ mở để bạn đọc kết quả. File `WebFileLauncher.Host.exe` chưa có chức năng tự cài khi nhấp đúp và chưa có chữ ký số tin cậy. Nếu Smart App Control chặn cầu nối, tiện ích chưa thể mở file trên máy đó. Xem phần xử lý lỗi bên dưới.
 
 ## 1. Tải và giải nén
 
@@ -21,14 +21,17 @@ Không chạy trực tiếp trong ZIP. Giữ nguyên vị trí thư mục sau kh
 Tiện ích cần một chương trình nhỏ gọi là **cầu nối** để mở file trên máy. Bước này đăng ký cầu nối cho **cả Chrome và Edge**, không cần quyền quản trị.
 
 1. Trong File Explorer, mở thư mục chứa `README.md`.
-2. Bấm thanh địa chỉ của File Explorer, gõ `powershell` rồi nhấn **Enter**.
-3. Trong cửa sổ PowerShell vừa mở, chạy:
+2. Nhấp đúp **`install.cmd`**. Cửa sổ cài đặt sẽ giữ nguyên sau khi chạy.
+3. Khi thấy **Registered for Chrome and Edge** và **Installation completed**, chuyển sang bước 3 bên dưới.
+4. Nếu thấy lỗi, giữ cửa sổ đó để chụp hoặc chép nguyên thông báo. Nhật ký nằm ở `%TEMP%\WebFileLauncher-install.log`. Nhấn phím bất kỳ khi muốn đóng.
 
-   ```powershell
-   .\native-host\install.ps1
-   ```
+Nếu `install.cmd` cũng bị Windows chặn, mở PowerShell từ thư mục này bằng cách gõ `powershell` vào thanh địa chỉ File Explorer, rồi chạy:
 
-4. Khi thấy thông báo **Registered for Chrome and Edge**, chuyển sang bước 3.
+```powershell
+.\native-host\install.ps1
+```
+
+Cửa sổ PowerShell mở sẵn sẽ không tự đóng khi script lỗi. Đây vẫn là cùng script cài đặt, tuân theo chính sách Windows hiện tại.
 
 Sau bước này, bạn không cần mở PowerShell mỗi lần sử dụng. Script tạo file cấu hình `native-host/host.json` theo đường dẫn trên máy bạn; không gửi file đó cho người khác.
 
@@ -87,7 +90,7 @@ Kiểm tra đã giải nén toàn bộ gói, chạy thành công bước 2 và g
 
 ### PowerShell báo không cho chạy script
 
-Máy có thể đang áp dụng chính sách hạn chế script. Bản hiện tại chưa có bộ cài thay thế không dùng PowerShell. Nếu không được phép chạy, cần bản cài được tổ chức cho phép hoặc hỗ trợ từ quản trị viên; hướng dẫn này không yêu cầu tắt chính sách hay chạy lệnh bypass.
+Máy có thể đang áp dụng chính sách hạn chế script. `install.cmd` cũng dùng PowerShell và không loại bỏ giới hạn này. Bản hiện tại chưa có bộ cài không dùng PowerShell. Nếu không được phép chạy, cần bản cài được tổ chức cho phép hoặc hỗ trợ từ quản trị viên; hướng dẫn này không yêu cầu tắt chính sách hay chạy lệnh bypass.
 
 ### Smart App Control / Application Control chặn
 
