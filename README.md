@@ -1,36 +1,123 @@
 # Web File Launcher
 
-**Author: qu4nh** · Extension 2.1.0 · Windows · Chrome và Microsoft Edge
+Tự mở file, chương trình hoặc thư mục trên máy khi bạn truy cập một website đã chọn.
 
-Popup nhỏ 400 × 560 px khi bấm biểu tượng tiện ích. Tạo quy tắc website → file/chương trình/thư mục, bật/tắt, mở thử và xem hoạt động ngay trong popup.
+Ví dụ: mở **coding.uet.edu.vn** → tự chạy **python_server.exe** của bạn. Mọi thao tác quản lý nằm trong popup nhỏ khi bấm biểu tượng tiện ích.
 
-## Cài đặt
+**Tác giả:** qu4nh · **Phiên bản:** 2.1.0 · **Trình duyệt:** Chrome, Microsoft Edge · **Hệ điều hành:** Windows 10/11
 
-1. Giải nén toàn bộ gói vào một thư mục cố định. Không di chuyển thư mục sau khi cài.
-2. Mở PowerShell tại thư mục gốc vừa giải nén, chạy:
+> **Trước khi cài:** bản hiện tại cần chạy `install.ps1` **một lần** để kết nối tiện ích với Windows. File `WebFileLauncher.Host.exe` chưa có chức năng tự cài khi nhấp đúp và chưa có chữ ký số tin cậy. Nếu Smart App Control chặn cầu nối, tiện ích chưa thể mở file trên máy đó. Xem phần xử lý lỗi bên dưới.
+
+## 1. Tải và giải nén
+
+1. Trên trang GitHub này, bấm **Code → Download ZIP**.
+2. Giải nén toàn bộ ZIP vào nơi bạn muốn giữ lâu dài.
+3. Mở thư mục chứa `README.md`, `extension` và `native-host`.
+
+Không chạy trực tiếp trong ZIP. Giữ nguyên vị trí thư mục sau khi cài; không cần di chuyển hay chép file mục tiêu vào thư mục tiện ích.
+
+## 2. Kết nối với Windows — chỉ làm một lần
+
+Tiện ích cần một chương trình nhỏ gọi là **cầu nối** để mở file trên máy. Bước này đăng ký cầu nối cho **cả Chrome và Edge**, không cần quyền quản trị.
+
+1. Trong File Explorer, mở thư mục chứa `README.md`.
+2. Bấm thanh địa chỉ của File Explorer, gõ `powershell` rồi nhấn **Enter**.
+3. Trong cửa sổ PowerShell vừa mở, chạy:
 
    ```powershell
    .\native-host\install.ps1
    ```
 
-   Đăng ký cầu nối cho cả Chrome và Edge của tài khoản Windows hiện tại; không cần quyền quản trị. Script tạo `native-host/host.json` với đường dẫn trên máy bạn. Nếu chính sách Windows chặn, không tắt hoặc vượt chính sách để chạy.
-3. Mở `chrome://extensions` hoặc `edge://extensions`, bật **Developer mode**, bấm **Load unpacked** và chọn thư mục **extension**.
-4. Ghim tiện ích nếu muốn, rồi bấm biểu tượng để mở popup. Không có tab cấu hình riêng.
-5. Chọn **＋ Thêm mới**, nhập tên và website. Nút **Trang này** dùng website đang mở. Bấm **Chọn file và lưu**, chọn file/thư mục trong hộp thoại Windows.
-6. Mở hoặc tải lại website để tự mở file. Nếu cập nhật từ bản trước, thay thư mục và bấm **Reload** trong trang quản lý tiện ích.
+4. Khi thấy thông báo **Registered for Chrome and Edge**, chuyển sang bước 3.
 
-Popup có thể đóng khi hộp chọn Windows lấy focus; phần chạy nền tiếp tục lưu kết quả. Mở lại popup sau khi chọn xong. Mỗi quy tắc áp dụng cho toàn bộ origin (giao thức + hostname + cổng), gồm các trang con. Có chờ 15 giây và tùy chọn kiểm tra trùng EXE theo đường dẫn. Tài liệu/thư mục được mở bằng ứng dụng mặc định. Không truyền đối số dòng lệnh.
+Sau bước này, bạn không cần mở PowerShell mỗi lần sử dụng. Script tạo file cấu hình `native-host/host.json` theo đường dẫn trên máy bạn; không gửi file đó cho người khác.
 
-## Smart App Control
+Nếu Windows báo chặn script hoặc chương trình, xem **Khi gặp lỗi**. Đăng ký thành công chưa bảo đảm Windows cho phép cầu nối chạy.
 
-Extension không tự chạy EXE trực tiếp: cần cầu nối Windows đi kèm. **Cầu nối này chưa có chữ ký số tin cậy; Smart App Control có thể chặn.** Gói tối giản không làm thay đổi giới hạn đó. Máy chặn cần bản cầu nối được ký phù hợp hoặc quy trình phê duyệt của quản trị viên. EXE đích cũng có thể bị kiểm tra độc lập. Không tắt Smart App Control để dùng gói này.
+## 3. Thêm tiện ích vào trình duyệt
 
-UI và logic JavaScript đã qua kiểm thử bằng API giả lập; chưa xác nhận toàn bộ luồng chọn/mở file với cầu nối thật do chính sách Application Control trên máy đóng gói. Windows cần .NET Framework 4.6 trở lên và ứng dụng/phụ thuộc cần thiết để mở file đích.
+| Bạn dùng | Nhập vào thanh địa chỉ |
+| --- | --- |
+| Google Chrome | `chrome://extensions` |
+| Microsoft Edge | `edge://extensions` |
 
-## Dữ liệu và gỡ bỏ
+1. Mở trang quản lý tiện ích tương ứng trong bảng trên.
+2. Bật **Developer mode / Chế độ nhà phát triển**.
+3. Bấm **Load unpacked / Tải tiện ích đã giải nén**.
+4. Chọn thư mục **extension** trong gói vừa giải nén.
+5. Bấm biểu tượng mảnh ghép trên thanh công cụ, tìm **Web File Launcher** rồi ghim/hiển thị tiện ích nếu muốn.
 
-Quy tắc lưu tại `%LOCALAPPDATA%\WebFileLauncher\rules.json`; bản nháp, cache và nhật ký lưu trong hồ sơ trình duyệt. Không gửi tới máy chủ trung gian. Không chia sẻ `host.json` được tạo sau khi cài hoặc dữ liệu quy tắc riêng; người nhận tự chạy script đăng ký trên máy họ.
+Dùng cả hai trình duyệt hoặc nhiều hồ sơ? Lặp lại bước 3 trong từng trình duyệt/hồ sơ muốn dùng. Tiện ích không tự mở tab cấu hình riêng.
 
-Để dừng sử dụng, xóa tiện ích ở trang quản lý extensions của từng trình duyệt. Đăng ký cầu nối còn lại không tự chạy chương trình. Có thể xóa các khóa `io.github.web_file_launcher` do gói này tạo bên dưới `HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts` và `HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts`, rồi xóa thư mục đã giải nén và dữ liệu quy tắc nếu không cần nữa. Không xóa khóa của tiện ích khác. File/chương trình đích không bị gói này xóa.
+## 4. Chọn website và file cần mở
 
-Gói chỉ gồm **9 file**: 6 file extension, EXE cầu nối, script đăng ký và README này. Không có mã kiểm thử, ảnh preview, package.json hoặc mã nguồn/build của cầu nối.
+1. Bấm biểu tượng **Web File Launcher** để mở popup.
+2. Kiểm tra dòng **Đã kết nối**. Có thể bấm nút **↻** để kiểm tra lại.
+3. Chọn **＋ Thêm mới**.
+4. Nhập tên dễ nhớ, ví dụ **Python Server cho UET**.
+5. Nhập website, ví dụ `https://coding.uet.edu.vn/`. Nút **Trang này** lấy địa chỉ website đang mở.
+6. Chọn **File / chương trình** hoặc **Thư mục**, rồi bấm **Chọn file và lưu**.
+7. Chọn file hoặc thư mục thật trên máy trong hộp thoại Windows.
+8. Mở hoặc tải lại website để thử. Bạn cũng có thể bấm **Mở thử** trong mục **Quy tắc**.
+
+**Popup có thể đóng khi bạn chuyển sang hộp chọn Windows.** Chọn xong rồi bấm lại biểu tượng tiện ích; kết quả vẫn được lưu bởi phần chạy nền.
+
+## Sử dụng hằng ngày
+
+Chỉ cần mở website đã cấu hình. Các mục trong popup:
+
+| Mục | Bạn có thể làm gì? |
+| --- | --- |
+| **Quy tắc** | Bật/tắt, mở thử, chọn lại file hoặc xóa một quy tắc. |
+| **＋ Thêm mới** | Kết nối một website với file/thư mục khác. |
+| **Hoạt động** | Xem 30 hoạt động tự mở gần nhất và xóa nhật ký. |
+
+- Một quy tắc áp dụng cho website đó và mọi trang con. Ví dụ, nhập `https://coding.uet.edu.vn/problem/1` vẫn áp dụng cho toàn bộ `https://coding.uet.edu.vn`.
+- HTTP, HTTPS, tên miền phụ và cổng khác nhau được coi là các website khác nhau.
+- Có thời gian chờ **15 giây** giữa các lần mở cùng quy tắc. Tùy chọn tránh mở trùng áp dụng cho chương trình `.exe` đang chạy từ cùng đường dẫn; tài liệu/thư mục chỉ áp dụng thời gian chờ.
+- Nếu bạn đóng chương trình trong lúc vẫn ở website, hãy tải lại trang hoặc bấm **Mở thử** để mở lại.
+- Đóng website không tự đóng chương trình đã mở. File tài liệu dùng ứng dụng mặc định của Windows; không hỗ trợ đối số dòng lệnh.
+- Các hồ sơ trình duyệt dùng chung quy tắc của cầu nối Windows. Mở lại popup để đồng bộ sau khi thay đổi ở hồ sơ khác.
+
+## Khi gặp lỗi
+
+### Popup báo chưa kết nối
+
+Kiểm tra đã giải nén toàn bộ gói, chạy thành công bước 2 và giữ nguyên vị trí thư mục. Sau đó bấm **↻** trong popup. Nếu đã di chuyển thư mục, chạy lại `install.ps1` từ vị trí mới và nạp lại thư mục `extension` trong trình duyệt.
+
+### PowerShell báo không cho chạy script
+
+Máy có thể đang áp dụng chính sách hạn chế script. Bản hiện tại chưa có bộ cài thay thế không dùng PowerShell. Nếu không được phép chạy, cần bản cài được tổ chức cho phép hoặc hỗ trợ từ quản trị viên; hướng dẫn này không yêu cầu tắt chính sách hay chạy lệnh bypass.
+
+### Smart App Control / Application Control chặn
+
+Cầu nối đi kèm **chưa được ký số tin cậy** nên có thể bị Windows chặn. Đổi sang extension hoặc đăng ký lại không tự giải quyết việc này. Cần bản cầu nối được ký phù hợp và được Windows cho phép; máy do tổ chức quản lý cần làm theo chính sách của quản trị viên.
+
+Không tắt Smart App Control để chạy gói này. Chương trình/file bạn muốn mở cũng được Windows kiểm tra độc lập.
+
+### Có kết nối nhưng file không mở
+
+- Bấm **Mở thử** để đọc thông báo cụ thể.
+- Kiểm tra file còn ở vị trí cũ; dùng **Chọn lại** nếu file đã đổi chỗ.
+- Thử mở trực tiếp file đó trong Windows để kiểm tra ứng dụng/phụ thuộc cần thiết.
+- Nếu vừa mở gần đây, chờ đủ 15 giây rồi thử lại.
+- Windows cần **.NET Framework 4.6 trở lên** để chạy cầu nối.
+
+## Cập nhật và gỡ bỏ
+
+**Cập nhật:** đóng hộp chọn file đang mở, giải nén bản mới vào vị trí cố định, chạy lại bước 2 nếu đường dẫn cầu nối thay đổi, rồi bấm **Reload / Tải lại** của tiện ích ở `chrome://extensions` hoặc `edge://extensions`.
+
+**Dừng sử dụng:** xóa **Web File Launcher** ở trang quản lý tiện ích của từng trình duyệt. Đăng ký cầu nối còn lại không tự chạy chương trình; file/chương trình mục tiêu được giữ nguyên.
+
+Nếu muốn dọn sạch, có thể xóa thư mục đã giải nén và dữ liệu quy tắc ở `%LOCALAPPDATA%\WebFileLauncher`. Người có kinh nghiệm hoặc quản trị viên có thể xóa riêng khóa `io.github.web_file_launcher` do gói này tạo tại hai vị trí sau, không xóa các khóa của tiện ích khác:
+
+```text
+HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts
+HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts
+```
+
+## Dữ liệu và trạng thái bản phát hành
+
+Quy tắc lưu tại `%LOCALAPPDATA%\WebFileLauncher\rules.json`. Cache, bản nháp và nhật ký lưu trong hồ sơ trình duyệt; tiện ích không gửi chúng tới máy chủ trung gian. Mỗi người tự chọn file và đăng ký cầu nối trên máy mình.
+
+UI và logic JavaScript đã qua kiểm thử bằng API giả lập. **Chưa xác nhận toàn bộ luồng chọn/mở file với cầu nối thật** do Application Control trên máy đóng gói. Đây chưa phải bản phát hành đã ký số và kiểm thử đầy đủ trên mọi máy.
