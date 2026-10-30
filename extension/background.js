@@ -1,8 +1,8 @@
 import {matchingRules, nativeRequest, syncRules} from './core.js';
 let queue = Promise.resolve();
-async function log(rule, ok, text) {
+async function log(rule, ok, record) {
   const {events = []} = await chrome.storage.local.get('events');
-  await chrome.storage.local.set({events: [{time: Date.now(), name: rule.label, ok, text}, ...events].slice(0, 30)});
+  await chrome.storage.local.set({events: [{time: Date.now(), name: rule.label, ok, ...record}, ...events].slice(0, 30)});
   await chrome.action.setBadgeText({text: ok ? '' : '!'});
   await chrome.action.setBadgeBackgroundColor({color: '#b42318'});
 }
@@ -12,8 +12,8 @@ async function navigate(details) {
   for (const rule of matchingRules(rules, details.url)) {
     try {
       const reply = await nativeRequest({action: 'launch', id: rule.id, origin: rule.origin});
-      await log(rule, true, reply.status === 'already_running' ? 'Chương trình đang chạy' : reply.status === 'cooldown' ? 'Đang trong thời gian chờ' : 'Đã mở');
-    } catch (error) { await log(rule, false, error.message); }
+      await log(rule, true, {code:reply.status === 'already_running' ? 'eventRunning' : reply.status === 'cooldown' ? 'eventCooldown' : 'eventOpened'});
+    } catch (error) { await log(rule, false, {text:error.message,errorCode:error.code,detail:error.detail}); }
   }
 }
 function enqueue(details) {
@@ -29,15 +29,16 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (input.id) payload.id=input.id;
   (async () => {
     try {
+      const {language} = await chrome.storage.local.get('language');
+      payload.language = language === 'vi' ? 'vi' : 'en';
       const response = await nativeRequest(payload);
       await syncRules();
-      const text = response.cancelled ? 'Đã hủy chọn.' : 'Đã lưu quy tắc.';
-      await chrome.storage.local.set({lastSelection:{time:Date.now(),ok:true,text}});
+      await chrome.storage.local.set({lastSelection:{time:Date.now(),ok:true,code:response.cancelled ? 'selectionCancelled' : 'selectionSaved'}});
       if (!response.cancelled) await chrome.storage.local.remove('draft');
       sendResponse({ok:true,cancelled:Boolean(response.cancelled)});
     } catch (error) {
-      await chrome.storage.local.set({lastSelection:{time:Date.now(),ok:false,text:error.message}});
-      sendResponse({ok:false,error:error.message});
+      await chrome.storage.local.set({lastSelection:{time:Date.now(),ok:false,text:error.message,errorCode:error.code,detail:error.detail}});
+      sendResponse({ok:false,error:error.message,errorCode:error.code,detail:error.detail});
     }
   })();
   return true;

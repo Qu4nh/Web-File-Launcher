@@ -1,8 +1,9 @@
+import {codedError} from './i18n.js';
 export const HOST = 'io.github.web_file_launcher';
 export function websiteOrigin(value) {
   const url = new URL(value);
   if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password)
-    throw new Error('Nhập URL HTTP/HTTPS hợp lệ, không chứa thông tin đăng nhập.');
+    throw codedError('invalidUrl');
   return url.origin;
 }
 export function matchingRules(rules, url) {
@@ -12,8 +13,8 @@ export function matchingRules(rules, url) {
 export function nativeRequest(message) {
   return new Promise((resolve, reject) => chrome.runtime.sendNativeMessage(HOST, message, response => {
     const error = chrome.runtime.lastError;
-    if (error) return reject(new Error('Chưa kết nối được cầu nối Windows. Xem README để cài hoặc kiểm tra chữ ký. ' + error.message));
-    if (!response?.ok) return reject(new Error(response?.error || 'Cầu nối không phản hồi.'));
+    if (error) return reject(codedError('hostUnavailable',error.message));
+    if (!response?.ok) return reject((response?.error ? codedError('requestFailed',response.error) : codedError('hostNoResponse')));
     resolve(response);
   }));
 }

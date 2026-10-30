@@ -9,7 +9,7 @@ Open a local application, document, or folder automatically when you visit a con
 ![Windows](https://img.shields.io/badge/platform-Windows-0078D4)
 ![Chrome](https://img.shields.io/badge/browser-Chrome-4285F4)
 ![Edge](https://img.shields.io/badge/browser-Edge-0078D7)
-![Version](https://img.shields.io/badge/extension-v2.1.0-16694F)
+![Version](https://img.shields.io/badge/extension-v2.2.0-16694F)
 
 [Getting started](#getting-started) · [Usage](#usage) · [Troubleshooting](#troubleshooting) · [Report an issue](https://github.com/Qu4nh/Web-File-Launcher/issues)
 
@@ -31,6 +31,7 @@ The project consists of a browser extension and a Windows **native host**. The n
 
 - Map websites to local applications, documents, or folders.
 - Add, enable, disable, remove, and test rules in a **400 × 560 px popup**.
+- Switch between **English (default)** and **Vietnamese** without reopening the popup.
 - Select targets using the Windows file or folder picker.
 - Use the current website without typing its address.
 - Optionally avoid launching an executable that is already running from the same path.
@@ -47,7 +48,7 @@ The project consists of a browser extension and a Windows **native host**. The n
 | Runtime | .NET Framework 4.6 or later |
 | Local target | An existing file, application, or folder accessible to your Windows account |
 
-Documents require an associated application. Executables may have their own dependencies. The native host currently supports Windows only. The popup interface is currently in Vietnamese; label translations are included below.
+Documents require an associated application. Executables may have their own dependencies. The native host currently supports Windows only. The popup defaults to English. Use the language selector in its footer to switch between **English** and **Tiếng Việt**. Your choice is saved per browser profile.
 
 ## Getting started
 
@@ -102,13 +103,13 @@ Repeat this step for each browser profile you want to use. You only need to regi
 
 ### 4. Create your first rule
 
-1. Open the popup and check for **Đã kết nối** (Connected). Click **↻** to refresh if needed.
-2. Select **＋ Thêm mới** (Add new).
+1. Open the popup and check for **Connected**. Click **↻** to refresh if needed.
+2. Select **＋ Add new**.
 3. Enter a name such as **Project workspace**.
-4. Enter a website, for example `https://example.com/`, or click **Trang này** (Current site).
-5. Choose **File / chương trình** (File / application) or **Thư mục** (Folder).
-6. Click **Chọn file và lưu** (Choose target and save), then select your target in the Windows dialog.
-7. Visit or reload the website to trigger the rule. Use **Mở thử** (Test launch) to test it manually.
+4. Enter a website, for example `https://example.com/`, or click **Current site**.
+5. Choose **File / application** or **Folder**.
+6. Click **Choose target and save**, then select your target in the Windows dialog.
+7. Visit or reload the website to trigger the rule. Use **Test launch** to test it manually.
 
 The popup may close when the Windows picker receives focus. Selection continues in the background; reopen the popup after finishing to see the saved result. Complete or cancel the existing picker before opening another one.
 
@@ -116,12 +117,13 @@ The popup may close when the Windows picker receives focus. Selection continues 
 
 | Popup control | Action |
 | --- | --- |
-| **Quy tắc** | View rules, toggle them, or launch a target manually. |
-| **＋ Thêm mới** | Create a website-to-target rule. |
-| **Chọn lại** | Select a different target for an existing rule. |
-| **Xóa** → **Xác nhận xóa** | Remove a rule; the target file is kept. |
-| **Hoạt động** | View or clear recent automatic launch events. |
+| **Rules** | View rules, toggle them, or launch a target manually. |
+| **＋ Add new** | Create a website-to-target rule. |
+| **Choose again** | Select a different target for an existing rule. |
+| **Delete** → **Confirm delete** | Remove a rule; the target file is kept. |
+| **Activity** | View or clear recent automatic launch events. |
 | **↻** | Reconnect and refresh saved rules. |
+| **English / Tiếng Việt** | Change the interface language; your choice is remembered. |
 
 ### Website matching
 
@@ -180,13 +182,13 @@ Confirm that setup completed, all files were extracted, and the installation dir
 
 ### A target does not open
 
-Use **Mở thử** to read the error, verify the target still exists, and try opening it directly in Windows. Wait for the 15-second cooldown if it was just launched. Use **Chọn lại** if its location changed.
+Use **Test launch** to read the error, verify the target still exists, and try opening it directly in Windows. Wait for the 15-second cooldown if it was just launched. Use **Choose again** if its location changed.
 
 If setup fails, inspect `%TEMP%\WebFileLauncher-install.log`. Share the relevant error when [opening an issue](https://github.com/Qu4nh/Web-File-Launcher/issues), removing personal paths or other private details first.
 
 ## Privacy and permissions
 
-Rules are stored in `%LOCALAPPDATA%\WebFileLauncher\rules.json`. Each browser profile stores its own local cache, form draft, selection result, and activity log. Profiles on the same Windows account share host rules; reopen the popup to refresh a profile's cache.
+Rules are stored in `%LOCALAPPDATA%\WebFileLauncher\rules.json`. Each browser profile stores its own language preference, local cache, form draft, selection result, and activity log. Profiles on the same Windows account share host rules; reopen the popup to refresh a profile's cache.
 
 The extension has no cloud backend, analytics, or remote scripts. It does not inject content scripts or read page contents. A page cannot supply a launch path: the native host resolves the target from the locally saved rule and validates the rule's enabled state and website origin.
 
