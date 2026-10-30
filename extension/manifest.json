@@ -7,7 +7,7 @@
     "extension_pages": "script-src 'self'; object-src 'none'"
   },
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxuf9+gsvLt2rdWn+iw6Jt4EARrYrot4yU69xz5Ao+zOD9Ir0tdKYwDxaTF8gT6UVQOvAiCDkFf+scGk2zeBWTBNFOmxL3KfQqtykopm0ysl01RQHgZitCoAA3lXNvvmDuUtbBRM7SnWQKVnslmKwSlSoFC8GVjRken2Kr8gVO7ZGfzKNrrToqWwVixl/7OoXtbiRiKUWE6n3Ug2Iu42AqhLdM7WERuBC0zEMyEOb9YYfqAkXOJAO4lxLOhf/MkxrQYgPM+Qf5VfgF2UahDtln5Ci/yp3NEJHSdpu1Y5/NpdFfcO2VGQcpOqV92CJT9D4O5MAnN6xUG9IG3Ik/KCEoQIDAQAB",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "name": "Web File Launcher",
   "permissions": [
     "storage",

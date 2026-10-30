@@ -9,7 +9,7 @@ Open a local application, document, or folder automatically when you visit a con
 ![Windows](https://img.shields.io/badge/platform-Windows-0078D4)
 ![Chrome](https://img.shields.io/badge/browser-Chrome-4285F4)
 ![Edge](https://img.shields.io/badge/browser-Edge-0078D7)
-![Version](https://img.shields.io/badge/extension-v2.2.0-16694F)
+![Version](https://img.shields.io/badge/extension-v2.3.0-16694F)
 
 [Getting started](#getting-started) · [Usage](#usage) · [Troubleshooting](#troubleshooting) · [Report an issue](https://github.com/Qu4nh/Web-File-Launcher/issues)
 
@@ -25,7 +25,7 @@ Manage everything from a compact toolbar popup. There is no separate settings ta
 
 The project consists of a browser extension and a Windows **native host**. The native host is required because browser extensions cannot directly launch arbitrary local programs.
 
-> **Distribution status:** this package includes an unsigned native host. Windows Smart App Control or organizational policies may prevent it from running. The installer does not disable these protections. This is not a signed, store-distributed release.
+> **Distribution status:** this package includes an unsigned native host. Windows Smart App Control or organizational policies may prevent it from running. The installer does not disable these protections. This is not a signed, store-distributed release. No package can guarantee execution on every managed or security-restricted PC; see [Microsoft’s Smart App Control documentation](https://learn.microsoft.com/en-us/windows/apps/develop/smart-app-control/overview).
 
 ## Features
 
@@ -54,7 +54,7 @@ Documents require an associated application. Executables may have their own depe
 
 ### 1. Download
 
-[Download the latest source-tree ZIP](https://github.com/Qu4nh/Web-File-Launcher/archive/refs/heads/main.zip), then extract the entire archive to a permanent location.
+[Download the latest source-tree ZIP](https://github.com/Qu4nh/Web-File-Launcher/archive/refs/heads/main.zip), then extract the entire archive to a location where you want to keep the browser extension.
 
 The extracted directory should contain:
 
@@ -62,17 +62,18 @@ The extracted directory should contain:
 Web-File-Launcher/
 ├── extension/                     Browser extension
 ├── native-host/
-│   ├── WebFileLauncher.Host.exe    Windows native host
-│   └── install.ps1                Native host registration
+│   └── WebFileLauncher.Host.exe    Native host with built-in installation
 ├── install.cmd                    Setup launcher with error logging
 └── README.md
 ```
 
-Do not run setup inside the ZIP or move this directory after installation.
+Do not run setup inside the ZIP. Keep the `extension` directory in place after loading it into your browser. The native host is installed separately into LocalAppData.
 
 ### 2. Register the native host
 
-Double-click **`install.cmd`** in the extracted directory. This invokes the registration script for your current Windows account; administrator privileges are not normally required.
+Double-click **`install.cmd`** in the extracted directory. This runs the native executable with its built-in `--install` command. **No PowerShell script is used**, so PowerShell execution policies and downloaded-script signature errors do not apply to this setup step. Administrator privileges are not normally required.
+
+The installer copies the host into `%LOCALAPPDATA%\WebFileLauncher\bin`, checks its Native Messaging response, and registers both 32-bit and 64-bit registry views where applicable for Chrome and Edge. You can also double-click `native-host/WebFileLauncher.Host.exe` and confirm the setup dialog.
 
 Wait for both messages:
 
@@ -87,7 +88,7 @@ The window stays open so you can read any errors. Setup writes a diagnostic log 
 %TEMP%\WebFileLauncher-install.log
 ```
 
-Registration creates `native-host/host.json` using your installation path. Do not share that generated file with other users; each person should run setup on their own PC.
+Registration creates `%LOCALAPPDATA%\WebFileLauncher\host.json`, pointing to the installed host on that PC. The setup self-test must succeed before browser registration is written. Each person should run setup on their own PC. Existing saved rules are preserved when reinstalling.
 
 If setup is blocked, see [Troubleshooting](#troubleshooting). Successful registration alone does not mean Windows will allow the host to execute.
 
@@ -99,7 +100,7 @@ If setup is blocked, see [Troubleshooting](#troubleshooting). Successful registr
 4. Pin **Web File Launcher** to your toolbar if desired.
 5. Click its icon to open the popup.
 
-Repeat this step for each browser profile you want to use. You only need to register the Windows host once per installation location and Windows account.
+Repeat this step for each browser profile you want to use. The Windows host is registered once per Windows account; moving the extracted package does not change its installed path. Moving the extension directory still requires reloading it in the browser.
 
 ### 4. Create your first rule
 
@@ -153,32 +154,21 @@ Entering a full page URL when creating a rule stores its origin. Opening a match
 
 ## Troubleshooting
 
-### “install.ps1 is not digitally signed”
+### The old installer reports “install.ps1 is not digitally signed”
 
-Downloaded files may carry an Internet-zone marker. Open PowerShell in the extracted directory and check your policy:
+You are using a package older than **2.3.0**. Download and extract the current package into a fresh folder, then run its `install.cmd`. The current setup does not include or invoke a `.ps1` file. Do not combine an old `install.cmd` with new files.
 
-```powershell
-Get-ExecutionPolicy
-```
+### Setup fails or a window closes immediately
 
-If it is **RemoteSigned**, inspect `native-host/install.ps1` first. If you trust that specific file, remove its download marker and run it:
-
-```powershell
-Unblock-File -LiteralPath .\native-host\install.ps1
-.\native-host\install.ps1
-```
-
-This does not change the execution policy or Smart App Control. Do not apply it indiscriminately to downloaded files. If your policy is **AllSigned**, **Restricted**, or managed by your organization, use an appropriately signed or approved installation instead.
-
-See Microsoft's [execution policy documentation](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1#manage-signed-and-unsigned-scripts).
+Use `install.cmd` rather than launching the executable from a terminal that closes on completion. The wrapper keeps its output visible and saves `%TEMP%\WebFileLauncher-install.log`. Confirm that the archive is fully extracted, the host executable exists, and .NET Framework 4.6 or later is available. If Windows blocks the executable itself, see the next section.
 
 ### Smart App Control or Application Control blocks the host
 
-The bundled host is unsigned. Re-registering it or unblocking the registration script does not make the executable trusted. You need a host build accepted by Windows and any applicable organizational policy. Do not disable these protections to install this package. Target applications are checked independently.
+The bundled host is unsigned. Moving setup into the executable removes the PowerShell dependency but does not make the executable trusted. You need a host build accepted by Windows and any applicable organizational policy. Do not disable these protections to install this package. Target applications are checked independently.
 
 ### The popup cannot connect
 
-Confirm that setup completed, all files were extracted, and the installation directory has not moved. Click **↻** in the popup. If the directory moved, register the host again and reload the extension from its new location.
+Confirm that setup reported **Native host connection verified** and **Installation completed**, then click **↻** in the popup. If the installed host was removed, run setup again. If only the extension directory moved, reload it from its new location in the browser.
 
 ### A target does not open
 
@@ -203,19 +193,18 @@ Applications launched by a rule have their own behavior and privacy policies.
 
 ## Updating and removal
 
-**Update:** close any open target picker, replace the package in its permanent location, and click **Reload** on the browser's extensions page. Run setup again if the host path changes.
+**Update:** close any open target picker, extract the new package, run its `install.cmd` to update the installed native host, and click **Reload** on the browser's extensions page. If the extension directory changed, load it from the new location instead. Do not replace only the JavaScript files when the host has also changed.
 
-**Remove:** remove **Web File Launcher** from each browser profile. Remaining host registration does not automatically launch anything, and your target files remain intact. You can then delete the installation directory and `%LOCALAPPDATA%\WebFileLauncher` if you no longer need the saved rules.
+**Remove:** remove **Web File Launcher** from each browser profile. To unregister the installed host, run this command in Command Prompt:
 
-For complete registry cleanup, experienced users or administrators can remove only the `io.github.web_file_launcher` key created by this package beneath:
-
-```text
-HKEY_CURRENT_USER\Software\Google\Chrome\NativeMessagingHosts
-HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts
+```bat
+"%LOCALAPPDATA%\WebFileLauncher\bin\WebFileLauncher.Host.exe" --uninstall
 ```
+
+This removes only registry entries owned by this installation. Saved rules, installed files, and your target files are retained. Once the host and any target picker have closed, you can delete `%LOCALAPPDATA%\WebFileLauncher` and the extracted package if no longer needed. Old releases registered directly from their extracted folder may have leftover `host.json` files; these are not used after running the current installer.
 
 ## Project status and feedback
 
-The popup and JavaScript logic have been tested with simulated browser/native APIs. Native host registration and a read-only messaging request have also been verified on the development machine. End-to-end target selection and launch through an installed extension have not yet been fully verified; compatibility with every Windows security configuration is not established.
+The popup and JavaScript logic have been tested with simulated browser/native APIs. The native installer has also been tested on the development machine, including a path with spaces and Unicode characters, repeated installation, registry-view verification, and a read-only host messaging self-test. End-to-end target selection and launch through an installed extension have not yet been fully verified; compatibility with every Windows security configuration is not established.
 
 This repository distributes the runnable package rather than a complete native-host development environment. Bug reports, documentation improvements, and feature requests are welcome through [GitHub Issues](https://github.com/Qu4nh/Web-File-Launcher/issues).
