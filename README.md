@@ -88,9 +88,28 @@ Chỉ cần mở website đã cấu hình. Các mục trong popup:
 
 Kiểm tra đã giải nén toàn bộ gói, chạy thành công bước 2 và giữ nguyên vị trí thư mục. Sau đó bấm **↻** trong popup. Nếu đã di chuyển thư mục, chạy lại `install.ps1` từ vị trí mới và nạp lại thư mục `extension` trong trình duyệt.
 
-### PowerShell báo không cho chạy script
+### Báo “install.ps1 is not digitally signed”
 
-Máy có thể đang áp dụng chính sách hạn chế script. `install.cmd` cũng dùng PowerShell và không loại bỏ giới hạn này. Bản hiện tại chưa có bộ cài không dùng PowerShell. Nếu không được phép chạy, cần bản cài được tổ chức cho phép hoặc hỗ trợ từ quản trị viên; hướng dẫn này không yêu cầu tắt chính sách hay chạy lệnh bypass.
+File tải từ GitHub có thể mang dấu “từ Internet”. Với chính sách `RemoteSigned`, PowerShell yêu cầu chữ ký cho script đó, trừ khi bạn đã kiểm tra và chủ động cho phép riêng file này.
+
+Mở PowerShell tại thư mục chứa `README.md`, kiểm tra:
+
+```powershell
+Get-ExecutionPolicy
+```
+
+Nếu kết quả là **RemoteSigned**, sau khi xem nội dung `native-host/install.ps1` và xác nhận đây là bản bạn tin cậy, chạy:
+
+```powershell
+Unblock-File -LiteralPath .\native-host\install.ps1
+.\native-host\install.ps1
+```
+
+`Unblock-File` chỉ bỏ dấu tải xuống của file đã chọn, không đổi Execution Policy hoặc Smart App Control. Không áp dụng cho mọi file tải về hoặc chương trình không rõ nguồn gốc.
+
+Nếu chính sách là **AllSigned**, **Restricted**, hoặc máy do tổ chức quản lý vẫn chặn, cách trên không thay thế yêu cầu ký/phê duyệt. Cần bản được ký phù hợp hoặc hỗ trợ từ quản trị viên; không dùng lệnh bypass để vượt chính sách.
+
+Xem [hướng dẫn RemoteSigned và script tải từ Internet của Microsoft](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1#manage-signed-and-unsigned-scripts).
 
 ### Smart App Control / Application Control chặn
 
