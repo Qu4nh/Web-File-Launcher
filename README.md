@@ -11,7 +11,7 @@ Open a local application, document, or folder automatically when you visit a con
 ![Edge](https://img.shields.io/badge/browser-Edge-0078D7)
 ![Version](https://img.shields.io/badge/extension-v2.1.0-16694F)
 
-[Getting started](#getting-started) · [Usage](#usage) · [Troubleshooting](#troubleshooting) · [Report an issue](https://github.com/Qu4nh/File-Launcher/issues)
+[Getting started](#getting-started) · [Usage](#usage) · [Troubleshooting](#troubleshooting) · [Report an issue](https://github.com/Qu4nh/Web-File-Launcher/issues)
 
 Created by [qu4nh](https://github.com/Qu4nh).
 
@@ -53,12 +53,12 @@ Documents require an associated application. Executables may have their own depe
 
 ### 1. Download
 
-[Download the latest source-tree ZIP](https://github.com/Qu4nh/File-Launcher/archive/refs/heads/main.zip), then extract the entire archive to a permanent location.
+[Download the latest source-tree ZIP](https://github.com/Qu4nh/Web-File-Launcher/archive/refs/heads/main.zip), then extract the entire archive to a permanent location.
 
 The extracted directory should contain:
 
 ```text
-File-Launcher/
+Web-File-Launcher/
 ├── extension/                     Browser extension
 ├── native-host/
 │   ├── WebFileLauncher.Host.exe    Windows native host
@@ -182,7 +182,7 @@ Confirm that setup completed, all files were extracted, and the installation dir
 
 Use **Mở thử** to read the error, verify the target still exists, and try opening it directly in Windows. Wait for the 15-second cooldown if it was just launched. Use **Chọn lại** if its location changed.
 
-If setup fails, inspect `%TEMP%\WebFileLauncher-install.log`. Share the relevant error when [opening an issue](https://github.com/Qu4nh/File-Launcher/issues), removing personal paths or other private details first.
+If setup fails, inspect `%TEMP%\WebFileLauncher-install.log`. Share the relevant error when [opening an issue](https://github.com/Qu4nh/Web-File-Launcher/issues), removing personal paths or other private details first.
 
 ## Privacy and permissions
 
@@ -216,4 +216,4 @@ HKEY_CURRENT_USER\Software\Microsoft\Edge\NativeMessagingHosts
 
 The popup and JavaScript logic have been tested with simulated browser/native APIs. Native host registration and a read-only messaging request have also been verified on the development machine. End-to-end target selection and launch through an installed extension have not yet been fully verified; compatibility with every Windows security configuration is not established.
 
-This repository distributes the runnable package rather than a complete native-host development environment. Bug reports, documentation improvements, and feature requests are welcome through [GitHub Issues](https://github.com/Qu4nh/File-Launcher/issues).
+This repository distributes the runnable package rather than a complete native-host development environment. Bug reports, documentation improvements, and feature requests are welcome through [GitHub Issues](https://github.com/Qu4nh/Web-File-Launcher/issues).
